@@ -1,5 +1,5 @@
 Starting Program:
-• Download Gitlab repository from reference list[1]
+• Download Github repository
 • Run pip install -r requirements.txt in command prompt
 • Open command prompt at CSC3002-Computer-Science-Project\WebApp
 • Run python app.py
