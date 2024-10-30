@@ -28,7 +28,7 @@ The completed project will allow users to select a province of Vietnam from an i
 Starting Program:
 • Download Github repository
 • Run pip install -r requirements.txt in command prompt
-• Open command prompt at CSC3002-Computer-Science-Project\WebApp
+• Open command prompt at \WebApp
 • Run python app.py
 • Open browser and go to localhost:5000
 
