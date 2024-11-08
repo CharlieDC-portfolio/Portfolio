@@ -2,8 +2,7 @@ import React, { useEffect } from "react";
 import logo from './spotify-icon.svg';
 import './App.css';
 import LogOutButton from './LogOutButton';
-import SpotifyGetPlaylists from "./SpotifyGetPlaylist";
-import SpotifyGetUserProfilePic from "./SpotifyGetUserProfilePic";
+import GeneratePlaylistButton from "./GeneratePlaylistButton";
 
 
 
@@ -39,11 +38,14 @@ import SpotifyGetUserProfilePic from "./SpotifyGetUserProfilePic";
       <LogOutButton />
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <p>
-        <SpotifyGetUserProfilePic />
-        <SpotifyGetPlaylists />
-        </p>
+        <a className="App-playlistName">
+        <input placeholder="Input Playlist Name" />
+        </a>
         <a>
+          <input placeholder="Input Track ID" /><input type="number" placeholder="Input Playlist Length" />
+        </a>
+        <a>
+        <GeneratePlaylistButton />
         </a>
       </header>
     </div>
