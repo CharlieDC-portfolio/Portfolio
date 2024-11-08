@@ -1,18 +1,19 @@
-import pandas as pd
 import json
 import os
 from collections import Counter
-import spotipy
-from flask import Flask
+from flask import Flask, request, jsonify
+from flask_cors import CORS
 
 
 
 
 app=Flask(__name__)
+CORS(app)
 
-@app.route('/playlister')
+@app.route('/playlister', methods=["GET"], strict_slashes=False)
 def SongRankerForPlaylist():
-    directory = "Playlist Maker/spotify_million_playlist_dataset/data"
+
+    directory = "E:/Portfolio/Playlist Maker/spotify_million_playlist_dataset/data"
     #songCrossover = pd.DataFrame(columns = ['track_uri', 'appearances'])
     songCrossover = []
 
@@ -50,4 +51,9 @@ def SongRankerForPlaylist():
     for i in range(len(finalPlaylist)):
         playlistDict['song '+str(i)]=finalPlaylist[i]
 
-    return playlistDict
+    response = jsonify(playlistDict)
+    #response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+
+if __name__ == "__main__":
+    app.run(debug=True)
