@@ -10,9 +10,16 @@ from flask_cors import CORS
 app=Flask(__name__)
 CORS(app)
 
-@app.route('/playlister', methods=["GET"], strict_slashes=False)
+@app.route('/playlister', methods=["POST"], strict_slashes=False)
 def SongRankerForPlaylist():
 
+        # Get the JSON data from the request
+    data = request.get_json()
+
+        # Extract trackId and playlistLength from the request data
+    trackID = data.get('trackId')
+    playlistLen = data.get('playlistLength')
+    
     directory = "E:/Portfolio/Playlist Maker/spotify_million_playlist_dataset/data"
     #songCrossover = pd.DataFrame(columns = ['track_uri', 'appearances'])
     songCrossover = []
@@ -25,7 +32,7 @@ def SongRankerForPlaylist():
                 jdict = json.load(jfile)
                 for i in range(len(jdict["playlists"])):
                     for j in range(len(jdict["playlists"][i]["tracks"])):
-                        if jdict["playlists"][i]["tracks"][j]["track_uri"]=="spotify:track:6I9VzXrHxO9rA9A5euc8Ak":
+                        if jdict["playlists"][i]["tracks"][j]["track_uri"]=="spotify:track:"+trackID:
                             #print(jdict["playlists"][i]["name"])
                             for k in range(len(jdict["playlists"][i]["tracks"])):
                                 #print(jdict["playlists"][i]["tracks"][k]["track_uri"])
@@ -35,7 +42,6 @@ def SongRankerForPlaylist():
 
     songFrequency = Counter(songCrossover)
     print(songFrequency)
-    playlistLen = 10
     length = 1
     #topRes = dict(list(songFrequency.items())[0: playlistLen])
     finalPlaylist = []
@@ -43,7 +49,7 @@ def SongRankerForPlaylist():
     for value, count in songFrequency.most_common():
         if length>playlistLen:
             break
-        if value != "spotify:track:6I9VzXrHxO9rA9A5euc8Ak":
+        if value != "spotify:track:"+trackID:
             finalPlaylist.append(value)
             length=length+1
 
