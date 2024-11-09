@@ -38,14 +38,8 @@ import GeneratePlaylistButton from "./GeneratePlaylistButton";
       <LogOutButton />
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <a className="App-playlistName">
-        <input placeholder="Input Playlist Name" />
-        </a>
         <a>
-          <input placeholder="Input Track ID" /><input type="number" placeholder="Input Playlist Length" />
-        </a>
-        <a>
-        <GeneratePlaylistButton />
+          <GeneratePlaylistButton />
         </a>
       </header>
     </div>

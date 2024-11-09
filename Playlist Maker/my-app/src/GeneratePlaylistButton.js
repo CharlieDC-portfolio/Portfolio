@@ -4,7 +4,6 @@ import './LoginButton.css';
 import 'reactjs-popup/dist/index.css';
 
 const PlaylistData = {
-  name: 'PlaceHolder Name',
   description: 'Placeholder description',
   public: false,
 };
@@ -15,6 +14,11 @@ const GeneratePlaylistButton = () => {
   const [responseMessage, setResponseMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [data2, setData2] = useState(null);
+
+  // State for input values
+  const [playlistName, setPlaylistName] = useState(''); // User input for playlist name
+  const [playlistLength, setPlaylistLength] = useState('');
+  const [trackId, setTrackId] = useState('');
 
   // Set token from localStorage if available
   useEffect(() => {
@@ -28,7 +32,6 @@ const GeneratePlaylistButton = () => {
   useEffect(() => {
     if (token) {
       setLoading(true);
-
       axios
         .get('https://api.spotify.com/v1/me', {
           headers: { 'Authorization': `Bearer ${token}` },
@@ -51,11 +54,24 @@ const GeneratePlaylistButton = () => {
       return;
     }
 
+    if (!trackId || !playlistLength || !playlistName) {
+      console.error('Track ID, Playlist Length, and Playlist Name are required!');
+      setResponseMessage('Please provide Track ID, Playlist Length, and Playlist Name.');
+      return;
+    }
+
     setLoading(true);
 
-    // Fetch track URIs from the backend (http://localhost:5000/playlister)
+    // Send a POST request to your backend with trackId and playlistLength
     fetch('http://localhost:5000/playlister', {
-      headers: { 'Content-Type': 'application/json' },
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        trackId: trackId,
+        playlistLength: parseInt(playlistLength, 10),
+      }),
     })
       .then((response) => response.json())
       .then((data) => {
@@ -65,11 +81,14 @@ const GeneratePlaylistButton = () => {
         return trackUris;  // Return track URIs to chain the playlist creation logic
       })
       .then((trackUris) => {
-        // Step 1: Create the playlist on Spotify
+        // Step 1: Create the playlist on Spotify with the user input playlist name
         const CREATE_PLAYLISTS_ENDPOINT = `https://api.spotify.com/v1/users/${userId}/playlists`;
 
         axios
-          .post(CREATE_PLAYLISTS_ENDPOINT, PlaylistData, {
+          .post(CREATE_PLAYLISTS_ENDPOINT, {
+            name: playlistName,  // Use the user-inputted playlist name here
+            ...PlaylistData,  // Keep the rest of the PlaylistData
+          }, {
             headers: {
               'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json',
@@ -118,6 +137,36 @@ const GeneratePlaylistButton = () => {
 
   return (
     <div>
+      <div className="input-group">
+        <label htmlFor="playlistName">Playlist Name</label>
+        <input
+          id="playlistName"
+          type="text"
+          value={playlistName}
+          onChange={(e) => setPlaylistName(e.target.value)} // Update playlist name on change
+          placeholder="Input Playlist Name"
+        />
+      </div>
+      <div className="input-group">
+        <label htmlFor="trackId">Track ID</label>
+        <input
+          id="trackId"
+          type="text"
+          value={trackId}
+          onChange={(e) => setTrackId(e.target.value)}
+          placeholder="Input Track ID"
+        />
+      </div>
+      <div className="input-group">
+        <label htmlFor="playlistLength">Playlist Length</label>
+        <input
+          id="playlistLength"
+          type="number"
+          value={playlistLength}
+          onChange={(e) => setPlaylistLength(e.target.value)}
+          placeholder="Input Playlist Length"
+        />
+      </div>
       <button className="buttonCreate" onClick={handlePlaylistGeneration} disabled={loading}>
         {loading ? 'Generating...' : 'Generate Playlist'}
       </button>
