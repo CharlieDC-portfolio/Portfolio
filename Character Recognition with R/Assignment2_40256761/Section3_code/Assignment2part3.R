@@ -1,0 +1,361 @@
+#import necessary libraries
+install.packages("ggpubr")
+library("ggpubr")
+library(ggplot2)
+library(tidyverse)
+library(dplyr)
+setwd("E:/CSC2062/Assignment2_40256761/Section2_features")#set work directory
+featuresTable<-read.csv(file='40256761_features.csv')#read features List csv into r
+type<-c()#create type vector
+par(mar=c(1,1,1,1))
+#plot histograms
+hist(featuresTable$nr_pix)
+hist(featuresTable$height)
+hist(featuresTable$cols_with_3p)
+mat<-as.matrix(featuresTable)
+count<-0
+for (i in 1:168){#loop through features list
+  if(mat[i,1]=="one"||mat[i,1]=="two"||mat[i,1]=="three"||mat[i,1]=="four"||mat[i,1]=="five"||mat[i,1]=="six"||mat[i,1]=="seven"){#filter by digits
+    type<-c(type,"digit")#assign digit as type
+    if(mat[i,3]<=20){#count how many files have a pixel count of 20 or greater
+    }else{
+      count<-count+1
+    }
+    
+  }else if(mat[i,1]=="a"||mat[i,1]=="b"||mat[i,1]=="c"||mat[i,1]=="d"||mat[i,1]=="e"||mat[i,1]=="f"||mat[i,1]=="g"){
+    type<-c(type,"letter")#assign letter as type
+  }else{
+    type<-c(type,"math")#assign math as type
+  }
+}
+print(paste("The probability that the number of pixels in a digit image is greater than 20 is >",(count/56)*100,"%"))#print % chance a digit image has 20 or more pixels
+#mean and standard deviation of nr_pix
+as.numeric(as.character(featuresTable$nr_pix))
+nr_pix_mn<-tapply(featuresTable$nr_pix, featuresTable$label,mean)
+pix_letters_mn<-(nr_pix_mn["a"]+nr_pix_mn["b"]+nr_pix_mn["c"]+nr_pix_mn["d"]+nr_pix_mn["e"]+nr_pix_mn["f"]+nr_pix_mn["g"])/7
+pix_digits_mn<-(nr_pix_mn["one"]+nr_pix_mn["two"]+nr_pix_mn["three"]+nr_pix_mn["four"]+nr_pix_mn["five"]+nr_pix_mn["six"]+nr_pix_mn["seven"])/7
+pix_total_mn<-sum(nr_pix_mn)/21
+nr_pix_sd<-tapply(featuresTable$nr_pix, featuresTable$label,sd)
+pix_letters_var<-(8*((nr_pix_sd["a"]^2)+(nr_pix_mn["a"]-pix_letters_mn)^2)+8*((nr_pix_sd["b"]^2)+(nr_pix_mn["b"]-pix_letters_mn)^2)+8*((nr_pix_sd["c"]^2)+(nr_pix_mn["c"]-pix_letters_mn)^2)+8*((nr_pix_sd["d"]^2)+(nr_pix_mn["d"]-pix_letters_mn)^2)+8*((nr_pix_sd["e"]^2)+(nr_pix_mn["e"]-pix_letters_mn)^2)+8*((nr_pix_sd["f"]^2)+(nr_pix_mn["f"]-pix_letters_mn)^2)+8*((nr_pix_sd["g"]^2)+(nr_pix_mn["g"]-pix_letters_mn)^2))/56
+pix_letters_sd<-sqrt(pix_letters_var)
+pix_digits_var<-(8*((nr_pix_sd["one"]^2)+(nr_pix_mn["one"]-pix_digits_mn)^2)+8*((nr_pix_sd["two"]^2)+(nr_pix_mn["two"]-pix_digits_mn)^2)+8*((nr_pix_sd["three"]^2)+(nr_pix_mn["three"]-pix_digits_mn)^2)+8*((nr_pix_sd["four"]^2)+(nr_pix_mn["four"]-pix_digits_mn)^2)+8*((nr_pix_sd["five"]^2)+(nr_pix_mn["five"]-pix_digits_mn)^2)+8*((nr_pix_sd["six"]^2)+(nr_pix_mn["six"]-pix_digits_mn)^2)+8*((nr_pix_sd["seven"]^2)+(nr_pix_mn["seven"]-pix_digits_mn)^2))/56
+pix_digits_sd<-sqrt(pix_digits_var)
+pix_total_sd<-sd(featuresTable$nr_pix)
+
+#mean and standard deviation of row_with_2
+as.numeric(as.character(featuresTable$row_with_2))
+row_with_2_mn<-tapply(featuresTable$row_with_2, featuresTable$label,mean)
+row2_letters_mn<-(row_with_2_mn["a"]+row_with_2_mn["b"]+row_with_2_mn["c"]+row_with_2_mn["d"]+row_with_2_mn["e"]+row_with_2_mn["f"]+row_with_2_mn["g"])/7
+row2_digits_mn<-(row_with_2_mn["one"]+row_with_2_mn["two"]+row_with_2_mn["three"]+row_with_2_mn["four"]+row_with_2_mn["five"]+row_with_2_mn["six"]+row_with_2_mn["seven"])/7
+row2_total_mn<-sum(row_with_2_mn)/21
+row2_sd<-tapply(featuresTable$row_with_2, featuresTable$label,sd)
+row2_letters_var<-(8*((row2_sd["a"]^2)+(row_with_2_mn["a"]-row2_letters_mn)^2)+8*((row2_sd["b"]^2)+(row_with_2_mn["b"]-row2_letters_mn)^2)+8*((row2_sd["c"]^2)+(row_with_2_mn["c"]-row2_letters_mn)^2)+8*((row2_sd["d"]^2)+(row_with_2_mn["d"]-row2_letters_mn)^2)+8*((row2_sd["e"]^2)+(row_with_2_mn["e"]-row2_letters_mn)^2)+8*((row2_sd["f"]^2)+(row_with_2_mn["f"]-row2_letters_mn)^2)+8*((row2_sd["g"]^2)+(row_with_2_mn["g"]-row2_letters_mn)^2))/56
+row2_letters_sd<-sqrt(row2_letters_var)
+row2_digits_var<-(8*((row2_sd["one"]^2)+(row_with_2_mn["one"]-row2_digits_mn)^2)+8*((row2_sd["two"]^2)+(row_with_2_mn["two"]-row2_digits_mn)^2)+8*((row2_sd["three"]^2)+(row_with_2_mn["three"]-row2_digits_mn)^2)+8*((row2_sd["four"]^2)+(row_with_2_mn["four"]-row2_digits_mn)^2)+8*((row2_sd["five"]^2)+(row_with_2_mn["five"]-row2_digits_mn)^2)+8*((row2_sd["six"]^2)+(row_with_2_mn["six"]-row2_digits_mn)^2)+8*((row2_sd["seven"]^2)+(row_with_2_mn["seven"]-row2_digits_mn)^2))/56
+row2_digits_sd<-sqrt(row2_digits_var)
+row2_total_sd<-sd(featuresTable$row_with_2)
+
+#mean and standard deviation of cols_with_2
+as.numeric(as.character(featuresTable$cols_with_2))
+cols_with_2_mn<-tapply(featuresTable$cols_with_2, featuresTable$label,mean)
+cols2_letters_mn<-(cols_with_2_mn["a"]+cols_with_2_mn["b"]+cols_with_2_mn["c"]+cols_with_2_mn["d"]+cols_with_2_mn["e"]+cols_with_2_mn["f"]+cols_with_2_mn["g"])/7
+cols2_digits_mn<-(cols_with_2_mn["one"]+cols_with_2_mn["two"]+cols_with_2_mn["three"]+cols_with_2_mn["four"]+cols_with_2_mn["five"]+cols_with_2_mn["six"]+cols_with_2_mn["seven"])/7
+cols2_total_mn<-sum(cols_with_2_mn)/21
+cols2_sd<-tapply(featuresTable$cols_with_2, featuresTable$label,sd)
+cols2_letters_var<-(8*((cols2_sd["a"]^2)+(cols_with_2_mn["a"]-cols2_letters_mn)^2)+8*((cols2_sd["b"]^2)+(cols_with_2_mn["b"]-cols2_letters_mn)^2)+8*((cols2_sd["c"]^2)+(cols_with_2_mn["c"]-cols2_letters_mn)^2)+8*((cols2_sd["d"]^2)+(cols_with_2_mn["d"]-cols2_letters_mn)^2)+8*((cols2_sd["e"]^2)+(cols_with_2_mn["e"]-cols2_letters_mn)^2)+8*((cols2_sd["f"]^2)+(cols_with_2_mn["f"]-cols2_letters_mn)^2)+8*((cols2_sd["g"]^2)+(cols_with_2_mn["g"]-cols2_letters_mn)^2))/56
+cols2_letters_sd<-sqrt(cols2_letters_var)
+cols2_digits_var<-(8*((cols2_sd["one"]^2)+(cols_with_2_mn["one"]-cols2_digits_mn)^2)+8*((cols2_sd["two"]^2)+(cols_with_2_mn["two"]-cols2_digits_mn)^2)+8*((cols2_sd["three"]^2)+(cols_with_2_mn["three"]-cols2_digits_mn)^2)+8*((cols2_sd["four"]^2)+(cols_with_2_mn["four"]-cols2_digits_mn)^2)+8*((cols2_sd["five"]^2)+(cols_with_2_mn["five"]-cols2_digits_mn)^2)+8*((cols2_sd["six"]^2)+(cols_with_2_mn["six"]-cols2_digits_mn)^2)+8*((cols2_sd["seven"]^2)+(cols_with_2_mn["seven"]-cols2_digits_mn)^2))/56
+cols2_digits_sd<-sqrt(cols2_digits_var)
+cols2_total_sd<-sd(featuresTable$cols_with_2)
+
+#mean and standard deviation of rows_with_3p
+as.numeric(as.character(featuresTable$rows_with_3p))
+rows_with_3p_mn<-tapply(featuresTable$rows_with_3p, featuresTable$label,mean)
+rows3p_letters_mn<-(rows_with_3p_mn["a"]+rows_with_3p_mn["b"]+rows_with_3p_mn["c"]+rows_with_3p_mn["d"]+rows_with_3p_mn["e"]+rows_with_3p_mn["f"]+rows_with_3p_mn["g"])/7
+rows3p_digits_mn<-(rows_with_3p_mn["one"]+rows_with_3p_mn["two"]+rows_with_3p_mn["three"]+rows_with_3p_mn["four"]+rows_with_3p_mn["five"]+rows_with_3p_mn["six"]+rows_with_3p_mn["seven"])/7
+rows3p_total_mn<-sum(rows_with_3p_mn)/21
+rows3p_sd<-tapply(featuresTable$rows_with_3p, featuresTable$label,sd)
+rows3p_letters_var<-(8*((rows3p_sd["a"]^2)+(rows_with_3p_mn["a"]-rows3p_letters_mn)^2)+8*((rows3p_sd["b"]^2)+(rows_with_3p_mn["b"]-rows3p_letters_mn)^2)+8*((rows3p_sd["c"]^2)+(rows_with_3p_mn["c"]-rows3p_letters_mn)^2)+8*((rows3p_sd["d"]^2)+(rows_with_3p_mn["d"]-rows3p_letters_mn)^2)+8*((rows3p_sd["e"]^2)+(rows_with_3p_mn["e"]-rows3p_letters_mn)^2)+8*((rows3p_sd["f"]^2)+(rows_with_3p_mn["f"]-rows3p_letters_mn)^2)+8*((rows3p_sd["g"]^2)+(rows_with_3p_mn["g"]-rows3p_letters_mn)^2))/56
+rows3p_letters_sd<-sqrt(rows3p_letters_var)
+rows3p_digits_var<-(8*((rows3p_sd["one"]^2)+(rows_with_3p_mn["one"]-rows3p_digits_mn)^2)+8*((rows3p_sd["two"]^2)+(rows_with_3p_mn["two"]-rows3p_digits_mn)^2)+8*((rows3p_sd["three"]^2)+(rows_with_3p_mn["three"]-rows3p_digits_mn)^2)+8*((rows3p_sd["four"]^2)+(rows_with_3p_mn["four"]-rows3p_digits_mn)^2)+8*((rows3p_sd["five"]^2)+(rows_with_3p_mn["five"]-rows3p_digits_mn)^2)+8*((rows3p_sd["six"]^2)+(rows_with_3p_mn["six"]-rows3p_digits_mn)^2)+8*((rows3p_sd["seven"]^2)+(rows_with_3p_mn["seven"]-rows3p_digits_mn)^2))/56
+rows3p_digits_sd<-sqrt(rows3p_digits_var)
+rows3p_total_sd<-sd(featuresTable$rows_with_3p)
+
+#mean and standard deviation of cols_with_3p
+as.numeric(as.character(featuresTable$cols_with_3p))
+cols_with_3p_mn<-tapply(featuresTable$cols_with_3p, featuresTable$label,mean)
+cols3p_letters_mn<-(cols_with_3p_mn["a"]+cols_with_3p_mn["b"]+cols_with_3p_mn["c"]+cols_with_3p_mn["d"]+cols_with_3p_mn["e"]+cols_with_3p_mn["f"]+cols_with_3p_mn["g"])/7
+cols3p_digits_mn<-(cols_with_3p_mn["one"]+cols_with_3p_mn["two"]+cols_with_3p_mn["three"]+cols_with_3p_mn["four"]+cols_with_3p_mn["five"]+cols_with_3p_mn["six"]+cols_with_3p_mn["seven"])/7
+cols3p_total_mn<-sum(cols_with_3p_mn)/21
+cols3p_sd<-tapply(featuresTable$cols_with_3p, featuresTable$label,sd)
+cols3p_letters_var<-(8*((cols3p_sd["a"]^2)+(cols_with_3p_mn["a"]-cols3p_letters_mn)^2)+8*((cols3p_sd["b"]^2)+(cols_with_3p_mn["b"]-cols3p_letters_mn)^2)+8*((cols3p_sd["c"]^2)+(cols_with_3p_mn["c"]-cols3p_letters_mn)^2)+8*((cols3p_sd["d"]^2)+(cols_with_3p_mn["d"]-cols3p_letters_mn)^2)+8*((cols3p_sd["e"]^2)+(cols_with_3p_mn["e"]-cols3p_letters_mn)^2)+8*((cols3p_sd["f"]^2)+(cols_with_3p_mn["f"]-cols3p_letters_mn)^2)+8*((cols3p_sd["g"]^2)+(cols_with_3p_mn["g"]-cols3p_letters_mn)^2))/56
+cols3p_letters_sd<-sqrt(cols3p_letters_var)
+cols3p_digits_var<-(8*((cols3p_sd["one"]^2)+(cols_with_3p_mn["one"]-cols3p_digits_mn)^2)+8*((cols3p_sd["two"]^2)+(cols_with_3p_mn["two"]-cols3p_digits_mn)^2)+8*((cols3p_sd["three"]^2)+(cols_with_3p_mn["three"]-cols3p_digits_mn)^2)+8*((cols3p_sd["four"]^2)+(cols_with_3p_mn["four"]-cols3p_digits_mn)^2)+8*((cols3p_sd["five"]^2)+(cols_with_3p_mn["five"]-cols3p_digits_mn)^2)+8*((cols3p_sd["six"]^2)+(cols_with_3p_mn["six"]-cols3p_digits_mn)^2)+8*((cols3p_sd["seven"]^2)+(cols_with_3p_mn["seven"]-cols3p_digits_mn)^2))/56
+cols3p_digits_sd<-sqrt(cols3p_digits_var)
+cols3p_total_sd<-sd(featuresTable$cols_with_3p)
+
+#mean and standard deviation of height
+as.numeric(as.character(featuresTable$height))
+height_mn<-tapply(featuresTable$height, featuresTable$label,mean)
+height_letters_mn<-(height_mn["a"]+height_mn["b"]+height_mn["c"]+height_mn["d"]+height_mn["e"]+height_mn["f"]+height_mn["g"])/7
+height_digits_mn<-(height_mn["one"]+height_mn["two"]+height_mn["three"]+height_mn["four"]+height_mn["five"]+height_mn["six"]+height_mn["seven"])/7
+height_total_mn<-sum(height_mn)/21
+height_sd<-tapply(featuresTable$height, featuresTable$label,sd)
+height_letters_var<-(8*((height_sd["a"]^2)+(height_mn["a"]-height_letters_mn)^2)+8*((height_sd["b"]^2)+(height_mn["b"]-height_letters_mn)^2)+8*((height_sd["c"]^2)+(height_mn["c"]-height_letters_mn)^2)+8*((height_sd["d"]^2)+(height_mn["d"]-height_letters_mn)^2)+8*((height_sd["e"]^2)+(height_mn["e"]-height_letters_mn)^2)+8*((height_sd["f"]^2)+(height_mn["f"]-height_letters_mn)^2)+8*((height_sd["g"]^2)+(height_mn["g"]-height_letters_mn)^2))/56
+height_letters_sd<-sqrt(height_letters_var)
+height_digits_var<-(8*((height_sd["one"]^2)+(height_mn["one"]-height_digits_mn)^2)+8*((height_sd["two"]^2)+(height_mn["two"]-height_digits_mn)^2)+8*((height_sd["three"]^2)+(height_mn["three"]-height_digits_mn)^2)+8*((height_sd["four"]^2)+(height_mn["four"]-height_digits_mn)^2)+8*((height_sd["five"]^2)+(height_mn["five"]-height_digits_mn)^2)+8*((height_sd["six"]^2)+(height_mn["six"]-height_digits_mn)^2)+8*((height_sd["seven"]^2)+(height_mn["seven"]-height_digits_mn)^2))/56
+height_digits_sd<-sqrt(height_digits_var)
+height_total_sd<-sd(featuresTable$height)
+
+#mean and standard deviation of width
+as.numeric(as.character(featuresTable$width))
+width_mn<-tapply(featuresTable$width, featuresTable$label,mean)
+width_letters_mn<-(width_mn["a"]+width_mn["b"]+width_mn["c"]+width_mn["d"]+width_mn["e"]+width_mn["f"]+width_mn["g"])/7
+width_digits_mn<-(width_mn["one"]+width_mn["two"]+width_mn["three"]+width_mn["four"]+width_mn["five"]+width_mn["six"]+width_mn["seven"])/7
+width_total_mn<-sum(width_mn)/21
+width_sd<-tapply(featuresTable$width, featuresTable$label,sd)
+width_letters_var<-(8*((width_sd["a"]^2)+(width_mn["a"]-width_letters_mn)^2)+8*((width_sd["b"]^2)+(width_mn["b"]-width_letters_mn)^2)+8*((width_sd["c"]^2)+(width_mn["c"]-width_letters_mn)^2)+8*((width_sd["d"]^2)+(width_mn["d"]-width_letters_mn)^2)+8*((width_sd["e"]^2)+(width_mn["e"]-width_letters_mn)^2)+8*((width_sd["f"]^2)+(width_mn["f"]-width_letters_mn)^2)+8*((width_sd["g"]^2)+(width_mn["g"]-width_letters_mn)^2))/56
+width_letters_sd<-sqrt(width_letters_var)
+width_digits_var<-(8*((width_sd["one"]^2)+(width_mn["one"]-width_digits_mn)^2)+8*((width_sd["two"]^2)+(width_mn["two"]-width_digits_mn)^2)+8*((width_sd["three"]^2)+(width_mn["three"]-width_digits_mn)^2)+8*((width_sd["four"]^2)+(width_mn["four"]-width_digits_mn)^2)+8*((width_sd["five"]^2)+(width_mn["five"]-width_digits_mn)^2)+8*((width_sd["six"]^2)+(width_mn["six"]-width_digits_mn)^2)+8*((width_sd["seven"]^2)+(width_mn["seven"]-width_digits_mn)^2))/56
+width_digits_sd<-sqrt(width_digits_var)
+width_total_sd<-sd(featuresTable$width)
+
+#mean and standard deviation of left2tile
+as.numeric(as.character(featuresTable$left2tile))
+left2_mn<-tapply(featuresTable$left2tile, featuresTable$label,mean)
+left2_letters_mn<-(left2_mn["a"]+left2_mn["b"]+left2_mn["c"]+left2_mn["d"]+left2_mn["e"]+left2_mn["f"]+left2_mn["g"])/7
+left2_digits_mn<-(left2_mn["one"]+left2_mn["two"]+left2_mn["three"]+left2_mn["four"]+left2_mn["five"]+left2_mn["six"]+left2_mn["seven"])/7
+left2_total_mn<-sum(left2_mn)/21
+left2_sd<-tapply(featuresTable$left2tile, featuresTable$label,sd)
+left2_letters_var<-(8*((left2_sd["a"]^2)+(left2_mn["a"]-left2_letters_mn)^2)+8*((left2_sd["b"]^2)+(left2_mn["b"]-left2_letters_mn)^2)+8*((left2_sd["c"]^2)+(left2_mn["c"]-left2_letters_mn)^2)+8*((left2_sd["d"]^2)+(left2_mn["d"]-left2_letters_mn)^2)+8*((left2_sd["e"]^2)+(left2_mn["e"]-left2_letters_mn)^2)+8*((left2_sd["f"]^2)+(left2_mn["f"]-left2_letters_mn)^2)+8*((left2_sd["g"]^2)+(left2_mn["g"]-left2_letters_mn)^2))/56
+left2_letters_sd<-sqrt(left2_letters_var)
+left2_digits_var<-(8*((left2_sd["one"]^2)+(left2_mn["one"]-left2_digits_mn)^2)+8*((left2_sd["two"]^2)+(left2_mn["two"]-left2_digits_mn)^2)+8*((left2_sd["three"]^2)+(left2_mn["three"]-left2_digits_mn)^2)+8*((left2_sd["four"]^2)+(left2_mn["four"]-left2_digits_mn)^2)+8*((left2_sd["five"]^2)+(left2_mn["five"]-left2_digits_mn)^2)+8*((left2_sd["six"]^2)+(left2_mn["six"]-left2_digits_mn)^2)+8*((left2_sd["seven"]^2)+(left2_mn["seven"]-left2_digits_mn)^2))/56
+left2_digits_sd<-sqrt(left2_digits_var)
+left2_total_sd<-sd(featuresTable$left2)
+
+#mean and standard deviation of right2tile
+as.numeric(as.character(featuresTable$right2tile))
+right2_mn<-tapply(featuresTable$right2tile, featuresTable$label,mean)
+right2_letters_mn<-(right2_mn["a"]+right2_mn["b"]+right2_mn["c"]+right2_mn["d"]+right2_mn["e"]+right2_mn["f"]+right2_mn["g"])/7
+right2_digits_mn<-(right2_mn["one"]+right2_mn["two"]+right2_mn["three"]+right2_mn["four"]+right2_mn["five"]+right2_mn["six"]+right2_mn["seven"])/7
+right2_total_mn<-sum(right2_mn)/21
+right2_sd<-tapply(featuresTable$right2tile, featuresTable$label,sd)
+right2_letters_var<-(8*((right2_sd["a"]^2)+(right2_mn["a"]-right2_letters_mn)^2)+8*((right2_sd["b"]^2)+(right2_mn["b"]-right2_letters_mn)^2)+8*((right2_sd["c"]^2)+(right2_mn["c"]-right2_letters_mn)^2)+8*((right2_sd["d"]^2)+(right2_mn["d"]-right2_letters_mn)^2)+8*((right2_sd["e"]^2)+(right2_mn["e"]-right2_letters_mn)^2)+8*((right2_sd["f"]^2)+(right2_mn["f"]-right2_letters_mn)^2)+8*((right2_sd["g"]^2)+(right2_mn["g"]-right2_letters_mn)^2))/56
+right2_letters_sd<-sqrt(right2_letters_var)
+right2_digits_var<-(8*((right2_sd["one"]^2)+(right2_mn["one"]-right2_digits_mn)^2)+8*((right2_sd["two"]^2)+(right2_mn["two"]-right2_digits_mn)^2)+8*((right2_sd["three"]^2)+(right2_mn["three"]-right2_digits_mn)^2)+8*((right2_sd["four"]^2)+(right2_mn["four"]-right2_digits_mn)^2)+8*((right2_sd["five"]^2)+(right2_mn["five"]-right2_digits_mn)^2)+8*((right2_sd["six"]^2)+(right2_mn["six"]-right2_digits_mn)^2)+8*((right2_sd["seven"]^2)+(right2_mn["seven"]-right2_digits_mn)^2))/56
+right2_digits_sd<-sqrt(right2_digits_var)
+right2_total_sd<-sd(featuresTable$right2)
+
+#mean and standard deviation of verticalness
+as.numeric(as.character(featuresTable$verticalness))
+verticalness_mn<-tapply(featuresTable$verticalness, featuresTable$label,mean)
+verticalness_letters_mn<-(verticalness_mn["a"]+verticalness_mn["b"]+verticalness_mn["c"]+verticalness_mn["d"]+verticalness_mn["e"]+verticalness_mn["f"]+verticalness_mn["g"])/7
+verticalness_digits_mn<-(verticalness_mn["one"]+verticalness_mn["two"]+verticalness_mn["three"]+verticalness_mn["four"]+verticalness_mn["five"]+verticalness_mn["six"]+verticalness_mn["seven"])/7
+verticalness_total_mn<-sum(verticalness_mn)/21
+verticalness_sd<-tapply(featuresTable$verticalness, featuresTable$label,sd)
+verticalness_letters_var<-(8*((verticalness_sd["a"]^2)+(verticalness_mn["a"]-verticalness_letters_mn)^2)+8*((verticalness_sd["b"]^2)+(verticalness_mn["b"]-verticalness_letters_mn)^2)+8*((verticalness_sd["c"]^2)+(verticalness_mn["c"]-verticalness_letters_mn)^2)+8*((verticalness_sd["d"]^2)+(verticalness_mn["d"]-verticalness_letters_mn)^2)+8*((verticalness_sd["e"]^2)+(verticalness_mn["e"]-verticalness_letters_mn)^2)+8*((verticalness_sd["f"]^2)+(verticalness_mn["f"]-verticalness_letters_mn)^2)+8*((verticalness_sd["g"]^2)+(verticalness_mn["g"]-verticalness_letters_mn)^2))/56
+verticalness_letters_sd<-sqrt(verticalness_letters_var)
+verticalness_digits_var<-(8*((verticalness_sd["one"]^2)+(verticalness_mn["one"]-verticalness_digits_mn)^2)+8*((verticalness_sd["two"]^2)+(verticalness_mn["two"]-verticalness_digits_mn)^2)+8*((verticalness_sd["three"]^2)+(verticalness_mn["three"]-verticalness_digits_mn)^2)+8*((verticalness_sd["four"]^2)+(verticalness_mn["four"]-verticalness_digits_mn)^2)+8*((verticalness_sd["five"]^2)+(verticalness_mn["five"]-verticalness_digits_mn)^2)+8*((verticalness_sd["six"]^2)+(verticalness_mn["six"]-verticalness_digits_mn)^2)+8*((verticalness_sd["seven"]^2)+(verticalness_mn["seven"]-verticalness_digits_mn)^2))/56
+verticalness_digits_sd<-sqrt(verticalness_digits_var)
+verticalness_total_sd<-sd(featuresTable$verticalness)
+
+#mean and standard deviation of top2tile
+as.numeric(as.character(featuresTable$top2tile))
+top2_mn<-tapply(featuresTable$top2tile, featuresTable$label,mean)
+top2_letters_mn<-(top2_mn["a"]+top2_mn["b"]+top2_mn["c"]+top2_mn["d"]+top2_mn["e"]+top2_mn["f"]+top2_mn["g"])/7
+top2_digits_mn<-(top2_mn["one"]+top2_mn["two"]+top2_mn["three"]+top2_mn["four"]+top2_mn["five"]+top2_mn["six"]+top2_mn["seven"])/7
+top2_total_mn<-sum(top2_mn)/21
+top2_sd<-tapply(featuresTable$top2tile, featuresTable$label,sd)
+top2_letters_var<-(8*((top2_sd["a"]^2)+(top2_mn["a"]-top2_letters_mn)^2)+8*((top2_sd["b"]^2)+(top2_mn["b"]-top2_letters_mn)^2)+8*((top2_sd["c"]^2)+(top2_mn["c"]-top2_letters_mn)^2)+8*((top2_sd["d"]^2)+(top2_mn["d"]-top2_letters_mn)^2)+8*((top2_sd["e"]^2)+(top2_mn["e"]-top2_letters_mn)^2)+8*((top2_sd["f"]^2)+(top2_mn["f"]-top2_letters_mn)^2)+8*((top2_sd["g"]^2)+(top2_mn["g"]-top2_letters_mn)^2))/56
+top2_letters_sd<-sqrt(top2_letters_var)
+top2_digits_var<-(8*((top2_sd["one"]^2)+(top2_mn["one"]-top2_digits_mn)^2)+8*((top2_sd["two"]^2)+(top2_mn["two"]-top2_digits_mn)^2)+8*((top2_sd["three"]^2)+(top2_mn["three"]-top2_digits_mn)^2)+8*((top2_sd["four"]^2)+(top2_mn["four"]-top2_digits_mn)^2)+8*((top2_sd["five"]^2)+(top2_mn["five"]-top2_digits_mn)^2)+8*((top2_sd["six"]^2)+(top2_mn["six"]-top2_digits_mn)^2)+8*((top2_sd["seven"]^2)+(top2_mn["seven"]-top2_digits_mn)^2))/56
+top2_digits_sd<-sqrt(top2_digits_var)
+top2_total_sd<-sd(featuresTable$top2)
+
+#mean and standard deviation of bottom2tile
+as.numeric(as.character(featuresTable$bottom2tile))
+bottom2_mn<-tapply(featuresTable$bottom2tile, featuresTable$label,mean)
+bottom2_letters_mn<-(bottom2_mn["a"]+bottom2_mn["b"]+bottom2_mn["c"]+bottom2_mn["d"]+bottom2_mn["e"]+bottom2_mn["f"]+bottom2_mn["g"])/7
+bottom2_digits_mn<-(bottom2_mn["one"]+bottom2_mn["two"]+bottom2_mn["three"]+bottom2_mn["four"]+bottom2_mn["five"]+bottom2_mn["six"]+bottom2_mn["seven"])/7
+bottom2_total_mn<-sum(bottom2_mn)/21
+bottom2_sd<-tapply(featuresTable$bottom2tile, featuresTable$label,sd)
+bottom2_letters_var<-(8*((bottom2_sd["a"]^2)+(bottom2_mn["a"]-bottom2_letters_mn)^2)+8*((bottom2_sd["b"]^2)+(bottom2_mn["b"]-bottom2_letters_mn)^2)+8*((bottom2_sd["c"]^2)+(bottom2_mn["c"]-bottom2_letters_mn)^2)+8*((bottom2_sd["d"]^2)+(bottom2_mn["d"]-bottom2_letters_mn)^2)+8*((bottom2_sd["e"]^2)+(bottom2_mn["e"]-bottom2_letters_mn)^2)+8*((bottom2_sd["f"]^2)+(bottom2_mn["f"]-bottom2_letters_mn)^2)+8*((bottom2_sd["g"]^2)+(bottom2_mn["g"]-bottom2_letters_mn)^2))/56
+bottom2_letters_sd<-sqrt(bottom2_letters_var)
+bottom2_digits_var<-(8*((bottom2_sd["one"]^2)+(bottom2_mn["one"]-bottom2_digits_mn)^2)+8*((bottom2_sd["two"]^2)+(bottom2_mn["two"]-bottom2_digits_mn)^2)+8*((bottom2_sd["three"]^2)+(bottom2_mn["three"]-bottom2_digits_mn)^2)+8*((bottom2_sd["four"]^2)+(bottom2_mn["four"]-bottom2_digits_mn)^2)+8*((bottom2_sd["five"]^2)+(bottom2_mn["five"]-bottom2_digits_mn)^2)+8*((bottom2_sd["six"]^2)+(bottom2_mn["six"]-bottom2_digits_mn)^2)+8*((bottom2_sd["seven"]^2)+(bottom2_mn["seven"]-bottom2_digits_mn)^2))/56
+bottom2_digits_sd<-sqrt(bottom2_digits_var)
+bottom2_total_sd<-sd(featuresTable$bottom2)
+
+#mean and standard deviation of horizontalness
+as.numeric(as.character(featuresTable$horizontalness))
+horizontalness_mn<-tapply(featuresTable$horizontalness, featuresTable$label,mean)
+horizontalness_letters_mn<-(horizontalness_mn["a"]+horizontalness_mn["b"]+horizontalness_mn["c"]+horizontalness_mn["d"]+horizontalness_mn["e"]+horizontalness_mn["f"]+horizontalness_mn["g"])/7
+horizontalness_digits_mn<-(horizontalness_mn["one"]+horizontalness_mn["two"]+horizontalness_mn["three"]+horizontalness_mn["four"]+horizontalness_mn["five"]+horizontalness_mn["six"]+horizontalness_mn["seven"])/7
+horizontalness_total_mn<-sum(horizontalness_mn)/21
+horizontalness_sd<-tapply(featuresTable$horizontalness, featuresTable$label,sd)
+horizontalness_letters_var<-(8*((horizontalness_sd["a"]^2)+(horizontalness_mn["a"]-horizontalness_letters_mn)^2)+8*((horizontalness_sd["b"]^2)+(horizontalness_mn["b"]-horizontalness_letters_mn)^2)+8*((horizontalness_sd["c"]^2)+(horizontalness_mn["c"]-horizontalness_letters_mn)^2)+8*((horizontalness_sd["d"]^2)+(horizontalness_mn["d"]-horizontalness_letters_mn)^2)+8*((horizontalness_sd["e"]^2)+(horizontalness_mn["e"]-horizontalness_letters_mn)^2)+8*((horizontalness_sd["f"]^2)+(horizontalness_mn["f"]-horizontalness_letters_mn)^2)+8*((horizontalness_sd["g"]^2)+(horizontalness_mn["g"]-horizontalness_letters_mn)^2))/56
+horizontalness_letters_sd<-sqrt(horizontalness_letters_var)
+horizontalness_digits_var<-(8*((horizontalness_sd["one"]^2)+(horizontalness_mn["one"]-horizontalness_digits_mn)^2)+8*((horizontalness_sd["two"]^2)+(horizontalness_mn["two"]-horizontalness_digits_mn)^2)+8*((horizontalness_sd["three"]^2)+(horizontalness_mn["three"]-horizontalness_digits_mn)^2)+8*((horizontalness_sd["four"]^2)+(horizontalness_mn["four"]-horizontalness_digits_mn)^2)+8*((horizontalness_sd["five"]^2)+(horizontalness_mn["five"]-horizontalness_digits_mn)^2)+8*((horizontalness_sd["six"]^2)+(horizontalness_mn["six"]-horizontalness_digits_mn)^2)+8*((horizontalness_sd["seven"]^2)+(horizontalness_mn["seven"]-horizontalness_digits_mn)^2))/56
+horizontalness_digits_sd<-sqrt(horizontalness_digits_var)
+horizontalness_total_sd<-sd(featuresTable$horizontalness)
+
+#mean and standard deviation of isolated
+as.numeric(as.character(featuresTable$isolated))
+isolated_mn<-tapply(featuresTable$isolated, featuresTable$label,mean)
+isolated_letters_mn<-(isolated_mn["a"]+isolated_mn["b"]+isolated_mn["c"]+isolated_mn["d"]+isolated_mn["e"]+isolated_mn["f"]+isolated_mn["g"])/7
+isolated_digits_mn<-(isolated_mn["one"]+isolated_mn["two"]+isolated_mn["three"]+isolated_mn["four"]+isolated_mn["five"]+isolated_mn["six"]+isolated_mn["seven"])/7
+isolated_total_mn<-sum(isolated_mn)/21
+isolated_sd<-tapply(featuresTable$isolated, featuresTable$label,sd)
+isolated_letters_var<-(8*((isolated_sd["a"]^2)+(isolated_mn["a"]-isolated_letters_mn)^2)+8*((isolated_sd["b"]^2)+(isolated_mn["b"]-isolated_letters_mn)^2)+8*((isolated_sd["c"]^2)+(isolated_mn["c"]-isolated_letters_mn)^2)+8*((isolated_sd["d"]^2)+(isolated_mn["d"]-isolated_letters_mn)^2)+8*((isolated_sd["e"]^2)+(isolated_mn["e"]-isolated_letters_mn)^2)+8*((isolated_sd["f"]^2)+(isolated_mn["f"]-isolated_letters_mn)^2)+8*((isolated_sd["g"]^2)+(isolated_mn["g"]-isolated_letters_mn)^2))/56
+isolated_letters_sd<-sqrt(isolated_letters_var)
+isolated_digits_var<-(8*((isolated_sd["one"]^2)+(isolated_mn["one"]-isolated_digits_mn)^2)+8*((isolated_sd["two"]^2)+(isolated_mn["two"]-isolated_digits_mn)^2)+8*((isolated_sd["three"]^2)+(isolated_mn["three"]-isolated_digits_mn)^2)+8*((isolated_sd["four"]^2)+(isolated_mn["four"]-isolated_digits_mn)^2)+8*((isolated_sd["five"]^2)+(isolated_mn["five"]-isolated_digits_mn)^2)+8*((isolated_sd["six"]^2)+(isolated_mn["six"]-isolated_digits_mn)^2)+8*((isolated_sd["seven"]^2)+(isolated_mn["seven"]-isolated_digits_mn)^2))/56
+isolated_digits_sd<-sqrt(isolated_digits_var)
+isolated_total_sd<-sd(featuresTable$isolated)
+
+print(paste("mean and sd of nr_pix for digits:", pix_digits_mn,pix_digits_sd))
+print(paste("mean and sd of nr_pix for letters:", pix_letters_mn,pix_letters_sd))
+print(paste("mean and sd of nr_pix for total:", pix_total_mn,pix_total_sd))
+
+print(paste("mean and sd of row_with_2 for digits:", row2_digits_mn,row2_digits_sd))
+print(paste("mean and sd of row_with_2 for letters:", row2_letters_mn,row2_letters_sd))
+print(paste("mean and sd of row_with_2 for total:", row2_total_mn,row2_total_sd))
+
+print(paste("mean and sd of cols_with_2 for digits:", cols2_digits_mn,cols2_digits_sd))
+print(paste("mean and sd of cols_with_2 for letters:", cols2_letters_mn,cols2_letters_sd))
+print(paste("mean and sd of cols_with_2 for total:", cols2_total_mn,cols2_total_sd))
+
+print(paste("mean and sd of rows_with_3p for digits:", rows3p_digits_mn,rows3p_digits_sd))
+print(paste("mean and sd of rows_with_3p for letters:", rows3p_letters_mn,rows3p_letters_sd))
+print(paste("mean and sd of rows_with_3p for total:", rows3p_total_mn,rows3p_total_sd))
+
+print(paste("mean and sd of cols_with_3p for digits:", cols3p_digits_mn,cols3p_digits_sd))
+print(paste("mean and sd of cols_with_3p for letters:", cols3p_letters_mn,cols3p_letters_sd))
+print(paste("mean and sd of cols_with_3p for total:", cols3p_total_mn,cols3p_total_sd))
+
+print(paste("mean and sd of height for digits:", height_digits_mn,height_digits_sd))
+print(paste("mean and sd of height for letters:", height_letters_mn,height_letters_sd))
+print(paste("mean and sd of height for total:", height_total_mn,height_total_sd))
+
+print(paste("mean and sd of width for digits:", width_digits_mn,width_digits_sd))
+print(paste("mean and sd of width for letters:", width_letters_mn,width_letters_sd))
+print(paste("mean and sd of width for total:", width_total_mn,width_total_sd))
+
+print(paste("mean and sd of left2tile for digits:", left2_digits_mn,left2_digits_sd))
+print(paste("mean and sd of left2tile for letters:", left2_letters_mn,left2_letters_sd))
+print(paste("mean and sd of left2tile for total:", left2_total_mn,left2_total_sd))
+
+print(paste("mean and sd of right2tile for digits:", right2_digits_mn,right2_digits_sd))
+print(paste("mean and sd of right2tile for letters:", right2_letters_mn,right2_letters_sd))
+print(paste("mean and sd of right2tile for total:", right2_total_mn,right2_total_sd))
+
+print(paste("mean and sd of vericalness for digits:", verticalness_digits_mn,verticalness_digits_sd))
+print(paste("mean and sd of verticalness for letters:", verticalness_letters_mn,verticalness_letters_sd))
+print(paste("mean and sd of verticalness for total:", verticalness_total_mn,verticalness_total_sd))
+
+print(paste("mean and sd of top2tile for digits:", top2_digits_mn,top2_digits_sd))
+print(paste("mean and sd of top2tile for letters:", top2_letters_mn,top2_letters_sd))
+print(paste("mean and sd of top2tile for total:", top2_total_mn,top2_total_sd))
+
+print(paste("mean and sd of bottom2tile for digits:", bottom2_digits_mn,bottom2_digits_sd))
+print(paste("mean and sd of bottom2tile for letters:", bottom2_letters_mn,bottom2_letters_sd))
+print(paste("mean and sd of bottom2tile for total:", bottom2_total_mn,bottom2_total_sd))
+
+print(paste("mean and sd of horizontalness for digits:", horizontalness_digits_mn,horizontalness_digits_sd))
+print(paste("mean and sd of horizontalness for letters:", horizontalness_letters_mn,horizontalness_letters_sd))
+print(paste("mean and sd of horizontalness for total:", horizontalness_total_mn,horizontalness_total_sd))
+
+print(paste("mean and sd of isolated for digits:", isolated_digits_mn,isolated_digits_sd))
+print(paste("mean and sd of isolated for letters:", isolated_letters_mn,isolated_letters_sd))
+print(paste("mean and sd of isolated for total:", isolated_total_mn,isolated_total_sd))
+
+featuresTable$type <- type#add type column to featuresTable
+
+Digits_Letters<-subset(featuresTable, type=="digit"|type=="letter")#filter out math symbols
+
+ggplot(Digits_Letters, aes(x=verticalness, fill=type)) + geom_histogram(binwidth = .2,alpha=.5,position = "identity")#plot a overlapping histogram of verticalness for letters and digits
+
+cor.test(featuresTable$height, featuresTable$verticalness, method = "pearson")#pearson correlation test between height and verticalness
+
+#create empty vectors for each feature for digits and letters
+nr_pix_digits<-c()
+nr_pix_letters<-c()
+rows_with_2_digits<-c()
+rows_with_2_letters<-c()
+cols_with_2_digits<-c()
+cols_with_2_letters<-c()
+rows_with_3p_digits<-c()
+rows_with_3p_letters<-c()
+cols_with_3p_digits<-c()
+cols_with_3p_letters<-c()
+height_digits<-c()
+height_letters<-c()
+width_digits<-c()
+width_letters<-c()
+left2tile_digits<-c()
+left2tile_letters<-c()
+right2tile_digits<-c()
+right2tile_letters<-c()
+verticalness_digits<-c()
+verticalness_letters<-c()
+top2tile_digits<-c()
+top2tile_letters<-c()
+bottom2tile_digits<-c()
+bottom2tile_letters<-c()
+horizontalness_digits<-c()
+horizontalness_letters<-c()
+isolate_digits<-c()
+isolate_letters<-c()
+
+for (i in 1:168){#loop through dataset adding feature values to corresponding vectors for digits
+  if(mat[i,1]=="one"||mat[i,1]=="two"||mat[i,1]=="three"||mat[i,1]=="four"||mat[i,1]=="five"||mat[i,1]=="six"||mat[i,1]=="seven"){
+    nr_pix_digits<-c(nr_pix_digits, mat[i,3])
+    rows_with_2_digits<-c(rows_with_2_digits, mat[i,4])
+    cols_with_2_digits<-c(cols_with_2_digits,mat[i,5])
+    rows_with_3p_digits<-c(rows_with_3p_digits,mat[i,6])
+    cols_with_3p_digits<-c(cols_with_3p_digits,mat[i,7])
+    height_digits<-c(height_digits,mat[i,8])
+    width_digits<-c(width_digits,mat[i,9])
+    left2tile_digits<-c(left2tile_digits,mat[i,10])
+    right2tile_digits<-c(right2tile_digits,mat[i,11])
+    verticalness_digits<-c(verticalness_digits,mat[i,12])
+    top2tile_digits<-c(top2tile_digits,mat[i,13])
+    bottom2tile_digits<-c(bottom2tile_digits,mat[i,14])
+    horizontalness_digits<-c(horizontalness_digits,mat[i,15])
+    isolate_digits<-c(isolate_digits,mat[i,16])
+
+  }else if(mat[i,1]=="a"||mat[i,1]=="b"||mat[i,1]=="c"||mat[i,1]=="d"||mat[i,1]=="e"||mat[i,1]=="f"||mat[i,1]=="g"){#loop through dataset adding feature values to corresponding vectors for letters
+    nr_pix_letters<-c(nr_pix_letters, mat[i,3])
+    rows_with_2_letters<-c(rows_with_2_letters, mat[i,4])
+    cols_with_2_letters<-c(cols_with_2_letters,mat[i,5])
+    rows_with_3p_letters<-c(rows_with_3p_letters,mat[i,6])
+    cols_with_3p_letters<-c(cols_with_3p_letters,mat[i,7])
+    height_letters<-c(height_letters,mat[i,8])
+    width_letters<-c(width_letters,mat[i,9])
+    left2tile_letters<-c(left2tile_letters,mat[i,10])
+    right2tile_letters<-c(right2tile_letters,mat[i,11])
+    verticalness_letters<-c(verticalness_letters,mat[i,12])
+    top2tile_letters<-c(top2tile_letters,mat[i,13])
+    bottom2tile_letters<-c(bottom2tile_letters,mat[i,14])
+    horizontalness_letters<-c(horizontalness_letters,mat[i,15])
+    isolate_letters<-c(isolate_letters,mat[i,16])
+    }
+}
+
+
+#conduct t-tests for each feature between digits and letters
+t.test(as.numeric(nr_pix_digits), as.numeric(nr_pix_letters))
+t.test(as.numeric(rows_with_2_digits), as.numeric(rows_with_2_letters))
+t.test(as.numeric(cols_with_2_digits), as.numeric(cols_with_2_letters))
+t.test(as.numeric(rows_with_3p_digits), as.numeric(rows_with_3p_letters))
+t.test(as.numeric(cols_with_3p_digits), as.numeric(cols_with_3p_letters))
+t.test(as.numeric(height_digits), as.numeric(height_letters))
+t.test(as.numeric(width_digits), as.numeric(width_letters))
+t.test(as.numeric(left2tile_digits), as.numeric(left2tile_letters))
+t.test(as.numeric(right2tile_digits), as.numeric(right2tile_letters))
+t.test(as.numeric(verticalness_digits), as.numeric(verticalness_letters))
+t.test(as.numeric(top2tile_digits), as.numeric(top2tile_letters))
+t.test(as.numeric(bottom2tile_digits), as.numeric(bottom2tile_letters))
+t.test(as.numeric(horizontalness_digits), as.numeric(horizontalness_letters))
+t.test(as.numeric(isolate_digits), as.numeric(isolate_letters))
+
+
+
